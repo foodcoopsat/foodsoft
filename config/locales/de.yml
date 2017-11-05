@@ -161,6 +161,29 @@ de:
         body: Inhalt
         parent_id: Oberseite
         title: Titel
+      poll:
+        created_at: Erstellt am
+        created_by: Erstellt von
+        description: Beschreibung
+        name: Name
+        ends: Endet am
+        starts: Läuft vom
+        one_vote_per_ordergroup: Nur eine Stimme pro Bestellgruppe
+        voting_method: Umfragetyp
+        voting_methods:
+          event: Termin
+          single_select: Einzelauswahl
+          multi_select: Mehrfachauswahl
+          points: Punkte
+          resistance_points: Widerstandspunkte
+        multi_select_count: Maximale Anzahl
+        min_points: Minimalpunkte
+        max_points: Maximalpunkte
+        choices: Wahlmöglichkeiten
+      poll_vote:
+        name: Name
+        note: Notiz
+        updated_at: Zuletzt aktualisierst
       stock_article:
         available: Verfügbar
         price: Nettopreis
@@ -256,6 +279,7 @@ de:
       order_article: Bestell-Artikel
       order_comment: Kommentar
       ordergroup: Bestellgruppe
+      poll: Umfrage
       stock_article: Lagerartikel
       stock_taking: Inventur
       supplier: Lieferant
@@ -609,6 +633,7 @@ de:
       use_iban: Zusätzlich Feld für die internationale Kontonummer bei Benutzern und Lieferanten anzeigen
       use_messages: Den Mitgliedern erlauben, miteinander innerhalb Foodsoft zu kommunizieren
       use_nick: Benutzernamen anstatt reale Namen zeigen und verwenden, jeder Benutzer muss dazu einen Benutzernamen (Spitznamen) haben.
+      use_polls: Einfache Umfragen aktivieren
       use_wiki: Änderbare Wiki Seiten aktivieren
       webstats_tracking_code: Tracking Code für Webseitenanalyse (wie Piwik oder Google Analytics), leer lassen wenn keine Analyse erfolgt
     keys:
@@ -668,6 +693,7 @@ de:
       use_iban: IBAN verwenden
       use_messages: Nachrichten
       use_nick: Benutzernamen verwenden
+      use_polls: Umfragen aktivieren
       use_printer: Drucker verwenden
       use_wiki: Wiki verwenden
       webstats_tracking_code: Code für Websiteanalysetool
@@ -1485,6 +1511,7 @@ de:
       pickups: Abholtage
       printer_jobs: Druckaufträge
       title: Bestellungen
+    polls: Umfragen
     tasks: Aufgaben
     wiki:
       all_pages: Alle Seiten
@@ -1717,6 +1744,38 @@ de:
       group_pdf: Gruppen PDF
       matrix_pdf: Matrix PDF
       title: Abholtage
+  polls:
+    choice:
+      remove: Löschen
+    create:
+      error: 'Umfrage konnte nicht erstellt werden: %{error}'
+      notice: Umfrage wurde erstellt
+    edit:
+      title: Umfrage bearbeiten
+    form:
+      already_voted: Die Wahlmöglichkeiten können icht mehr geändert werden, da bereits Stimmen abgegeben wurden.
+      new_choice: Zusätzliche Wahlmöglichkeit
+      requied_ordergroup_custom_field: '''%{label}'' von Bestellgruppe darf nicht leer sein'
+      requied_user_custom_field: '''%{label}'' von Benutzer_in darf nicht leer sein'
+    destroy:
+      error: 'Umfrage konnte nicht gelöscht werden: %{error}'
+      no_right: Du hast nicht genügend Rechte um die Umfrage zu löschen
+      notice: Umfrage wurde gelöscht
+    index:
+      new_poll: Neue Umfrage
+      title: Umfragen
+    new:
+      title: Umfrage erstellen
+    polls:
+      vote: Abstimmen
+    show:
+      vote: Abstimmen
+    update:
+      error: 'Umfrage konnte nicht aktualisiert werden: %{error}'
+      notice: Umfrage wurde aktualisiert
+    vote:
+      submit: Abstimmen
+      no_right: Du kannst bei dieser Umfrage nicht teilnehmen
   sessions:
     logged_in: Angemeldet!
     logged_out: Abgemeldet!
