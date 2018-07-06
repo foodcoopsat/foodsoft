@@ -1,0 +1,44 @@
+- title t('.title')
+
+- content_for :javascript do
+  :javascript
+    $(function() {
+      function update() {
+        var amount = 0;
+        var reference = $('#prefix').val();
+        $('input[data-use-me]').each(function() {
+          var name = $(this).attr('name');
+          var value = Math.round(parseInt($(this).val(), 10));
+          if (value > 0) {
+            amount += value;
+            reference += name + value;
+          }
+        });
+        $('#amount').text(amount);
+        $('#reference').text(reference);
+      }
+
+      $(document).on('input', 'input[data-use-me]', update);
+      update();
+    });
+
+= form_tag finance_create_transaction_collection_path do
+  = hidden_field_tag 'prefix', "FS#{@current_user.ordergroup.id}.#{@current_user.id}"
+  %p
+    %table#ordergroups{:style => "width:20em"}
+      %thead
+        %tr
+          %th= heading_helper FinancialTransactionType, :name
+          %th= heading_helper FinancialTransaction, :amount
+      %tbody
+        - for t in @types
+          %tr
+            %td= "#{t.name} (#{t.name_short}):"
+            %td= text_field_tag t.name_short, nil, class: 'input-small', 'data-use-me' => true
+  %p
+    = t('.text0')
+    %b#amount= '?'
+    = t('.text1')
+    %b#reference= '?'
+    = t('.text2')
+    %b= @iban

@@ -317,6 +317,7 @@ de:
         title_new: Finanztransaktionsklasse anlegen
     financial_transaction_types:
       form:
+        name_short_desc: Der Kurzname ist notwendig, falls der Finanztransaktionstyp in Banktransaktionen automatisch erkannt werden soll.
         title_edit: Finanztransaktionstyp bearbeiten
         title_new: Finanztransaktionstyp anlegen
     mail_delivery_status:
@@ -1171,6 +1172,11 @@ de:
       user:
         since: "(Mitglied seit %{when})"
         title: "%{user}"
+    reference_calculator:
+      text0: Bitte überweise
+      text1: mit der Zahlungsreferenz
+      text2: auf das Bankkonto
+      title: Zahlungsreferenz-Rechner
     start_nav:
       admin: Administration
       finances:
@@ -1228,6 +1234,7 @@ de:
       logout: Abmelden
       ordergroup: Meine Bestellgruppe
       profile: Profil bearbeiten
+      reference_calculator: Zahlungsreferenz-Rechner
     logo: "<span>food</span>soft"
   lib:
     render_pdf:

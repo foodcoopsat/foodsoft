@@ -14,6 +14,11 @@ class HomeController < ApplicationController
   def profile
   end
 
+  def reference_calculator
+    @iban = BankAccount.first.try(:iban)
+    @types = FinancialTransactionType.with_name_short.order('name ASC')
+  end
+
   def update_profile
     if @current_user.update_attributes(user_params)
       @current_user.ordergroup.update_attributes(ordergroup_params) if ordergroup_params

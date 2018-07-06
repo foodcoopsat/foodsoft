@@ -9,6 +9,8 @@ class FinancialTransactionType < ApplicationRecord
 
   before_destroy :restrict_deleting_last_financial_transaction_type
 
+  scope :with_name_short, -> { where.not(name_short: '') }
+
   def self.default
     first
   end
