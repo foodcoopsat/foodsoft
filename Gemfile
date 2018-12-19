@@ -41,6 +41,7 @@ gem 'acts_as_tree'
 gem 'rails-settings-cached', '= 0.4.3' # caching breaks tests until Rails 5 https://github.com/huacnlee/rails-settings-cached/issues/73
 gem 'resque'
 gem 'thin'
+gem 'puma'
 gem 'whenever', require: false # For defining cronjobs, see config/schedule.rb
 gem 'protected_attributes', '= 1.1.0' # 1.1.0 until tests work work with higher versions
 gem 'ruby-units'
@@ -69,7 +70,7 @@ gem 'foodsoft_polls', path: 'plugins/polls'
 
 # plugins not enabled by default
 #gem 'foodsoft_current_orders', path: 'plugins/current_orders'
-#gem 'foodsoft_printer', path: 'plugins/printer'
+gem 'foodsoft_printer', path: 'plugins/printer'
 #gem 'foodsoft_uservoice', path: 'plugins/uservoice'
 
 

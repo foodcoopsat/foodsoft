@@ -72,6 +72,14 @@ PATH
       rails
 
 PATH
+  remote: plugins/printer
+  specs:
+    foodsoft_printer (0.0.1)
+      deface (~> 1.0)
+      rails
+      tubesock
+
+PATH
   remote: plugins/wiki
   specs:
     foodsoft_wiki (0.0.1)
@@ -342,6 +350,7 @@ GEM
       binding_of_caller (>= 0.7)
       pry (>= 0.9.11)
     public_suffix (3.0.3)
+    puma (3.12.0)
     quiet_assets (1.1.0)
       railties (>= 3.1, < 5.0)
     rack (1.6.11)
@@ -511,6 +520,9 @@ GEM
     tilt (2.0.9)
     tins (1.16.3)
     ttfunk (1.5.1)
+    tubesock (0.2.9)
+      rack (>= 1.5.0)
+      websocket (>= 1.1.0)
     twitter-bootstrap-rails (2.2.8)
       actionpack (>= 3.1)
       execjs
@@ -534,6 +546,7 @@ GEM
       railties (>= 4.0)
       sprockets-rails (>= 2.0, < 4.0)
     webrobots (0.1.2)
+    websocket (1.2.8)
     whenever (0.10.0)
       chronic (>= 0.6.3)
     wikicloth (0.8.3)
@@ -574,6 +587,7 @@ DEPENDENCIES
   foodsoft_documents!
   foodsoft_messages!
   foodsoft_polls!
+  foodsoft_printer!
   foodsoft_wiki!
   gaffe
   haml (~> 4.0)
@@ -597,6 +611,7 @@ DEPENDENCIES
   protected_attributes (= 1.1.0)
   pry-rescue
   pry-stack_explorer
+  puma
   quiet_assets
   rack-cors
   rails (~> 4.2)
