@@ -956,6 +956,7 @@ en:
         title: New transaction
       new_collection:
         add_all_ordergroups: Add all ordergroups
+        add_all_ordergroups_custom_field: Add all ordergoups with %{label}
         new_ordergroup: Add new ordergroup
         save: Save transaction
         set_balance: Set the balance of the ordergroup to the entered amount.
