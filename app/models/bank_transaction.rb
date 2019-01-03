@@ -54,7 +54,7 @@ class BankTransaction < ApplicationRecord
 
   def assign_to_ordergroup
     m = /FS(?<group>\d+)(\.(?<user>\d+))?(?<parts>([A-Za-z]+\d+(\.\d+)?)+)/.match(reference)
-    return unless m
+    return assign_to_ordergroup_use_extended unless m
 
     h = Hash.new
     sum = 0
@@ -79,6 +79,59 @@ class BankTransaction < ApplicationRecord
         group.add_financial_transaction! value, note, usr, FinancialTransactionType.find_by_name_short(short), link if value > 0
       end
 
+      update_attribute :financial_link, link
+    end
+
+    return true
+  end
+
+  def assign_to_ordergroup_use_extended
+    return false unless FoodsoftConfig[:use_extended]
+    return false unless user
+    ordergroup = user.ordergroup
+    return false unless ordergroup
+
+    m = /^\d+$/.match(reference)
+    return false unless m
+
+    amount_credit = 0
+    amount_deposit = 0
+    amount_membership = 0
+
+    all_2 = true
+    found_3 = false
+    ref = reference.to_i.to_s
+
+    ref.each_char { |c|
+      all_2 = false if c != '2'
+      case c
+      when '1'
+        if ref.length == 1
+          amount_deposit = amount
+        else
+          amount_deposit += 30
+        end
+      when '2'
+        if ref.length == 1
+          amount_membership = amount
+        else
+          amount_membership += 10
+        end
+      when '3'
+        found_3 = true
+      end
+    }
+
+    amount_membership = amount if all_2
+    amount_credit = amount - amount_deposit - amount_membership if found_3
+    return false if amount != amount_credit + amount_membership + amount_deposit
+
+    ActiveRecord::Base.transaction do
+      note = "ID=#{id} (EUR #{amount})"
+      link = FinancialLink.new
+      ordergroup.add_financial_transaction! amount_deposit, note, user, FinancialTransactionType.find(1), link if amount_deposit > 0
+      ordergroup.add_financial_transaction! amount_membership, note, user, FinancialTransactionType.find(2), link if amount_membership > 0
+      ordergroup.add_financial_transaction! amount_credit, note, user, FinancialTransactionType.find(3), link if amount_credit > 0
       update_attribute :financial_link, link
     end
 
