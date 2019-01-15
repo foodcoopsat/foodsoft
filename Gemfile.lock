@@ -5,6 +5,34 @@ GIT
     localize_input (0.1.0)
 
 GIT
+  remote: https://github.com/paroga/ruby-easybank.git
+  revision: 2f03a1238ffb14b3617acb572d9ba36711d04fc3
+  specs:
+    easybank (0.0.1)
+      mechanize
+
+GIT
+  remote: https://github.com/paroga/ruby-holvi.git
+  revision: f33ef687f82668e15d6ae6766797623e3d9bf6bc
+  specs:
+    holvi (0.0.1)
+      mechanize
+
+GIT
+  remote: https://github.com/paroga/ruby-meinelba.git
+  revision: 7aaa16a0abaab48865c62de676ff564e66a3630c
+  specs:
+    meinelba (0.0.1)
+      mechanize
+
+GIT
+  remote: https://github.com/paroga/ruby-sparkasse.git
+  revision: 72407cbcd4acabdb3d09d16cc0bcc2993ccfae4a
+  specs:
+    sparkasse (0.0.1)
+      mechanize
+
+GIT
   remote: https://github.com/technoweenie/acts_as_versioned.git
   revision: 63b1fc8529d028fae632fe80ec0cb25df56cd76b
   specs:
@@ -162,6 +190,8 @@ GEM
     diff-lcs (1.3)
     diffy (3.2.1)
     docile (1.3.1)
+    domain_name (0.5.20180417)
+      unf (>= 0.0.5, < 1.0.0)
     doorkeeper (5.0.1)
       railties (>= 4.2)
     doorkeeper-i18n (4.0.0)
@@ -204,6 +234,8 @@ GEM
       nokogiri (>= 1.6.0)
       ruby_parser (~> 3.5)
     htmlentities (4.3.4)
+    http-cookie (1.0.3)
+      domain_name (~> 0.5)
     i18n (0.9.5)
       concurrent-ruby (~> 1.0)
     i18n-js (3.0.11)
@@ -261,6 +293,15 @@ GEM
       skinny (>= 0.1.2)
       sqlite3-ruby
       thin
+    mechanize (2.7.6)
+      domain_name (~> 0.5, >= 0.5.1)
+      http-cookie (~> 1.0)
+      mime-types (>= 1.17.2)
+      net-http-digest_auth (~> 1.1, >= 1.1.1)
+      net-http-persistent (>= 2.5.2)
+      nokogiri (~> 1.6)
+      ntlm-http (~> 0.1, >= 0.1.1)
+      webrobots (>= 0.0.9, < 0.2)
     meta_request (0.6.0)
       callsite (~> 0.0, >= 0.0.11)
       rack-contrib (>= 1.1, < 3)
@@ -276,8 +317,12 @@ GEM
     mono_logger (1.1.0)
     multi_json (1.13.1)
     mysql2 (0.4.10)
+    net-http-digest_auth (1.4.1)
+    net-http-persistent (3.0.0)
+      connection_pool (~> 2.2)
     nokogiri (1.9.1)
       mini_portile2 (~> 2.4.0)
+    ntlm-http (0.1.1)
     pdf-core (0.7.0)
     polyglot (0.3.5)
     prawn (2.2.2)
@@ -488,6 +533,7 @@ GEM
       binding_of_caller (>= 0.7.2)
       railties (>= 4.0)
       sprockets-rails (>= 2.0, < 4.0)
+    webrobots (0.1.2)
     whenever (0.10.0)
       chronic (>= 0.6.3)
     wikicloth (0.8.3)
@@ -520,6 +566,7 @@ DEPENDENCIES
   date_time_attribute
   doorkeeper
   doorkeeper-i18n
+  easybank!
   exception_notification
   factory_bot_rails
   faker
@@ -531,6 +578,7 @@ DEPENDENCIES
   gaffe
   haml (~> 4.0)
   haml-rails
+  holvi!
   i18n-js (~> 3.0.0.rc8)
   i18n-spec
   ice_cube
@@ -540,6 +588,7 @@ DEPENDENCIES
   less-rails
   localize_input!
   mailcatcher
+  meinelba!
   meta_request
   midi-smtp-server
   mysql2 (~> 0.4.0)
@@ -572,6 +621,7 @@ DEPENDENCIES
   simple-navigation-bootstrap
   simple_form
   simplecov
+  sparkasse!
   spreadsheet
   sqlite3
   therubyracer
