@@ -146,6 +146,8 @@ Rails.application.routes.draw do
 
     namespace :finance do
       root to: 'base#index'
+      get :report, to: 'base#new_report'
+      post :report, to: 'base#create_report'
 
       resources :order, controller: 'balancing', path: 'balancing' do
         member do
