@@ -198,6 +198,8 @@ es:
         user_list: Usuarios responsables
         workgroup: Grupo de trabajo
       user:
+        attachment: Adjunto
+        delete_attachment: Borra adjunto
         email: Correo electrónico
         first_name: Nombre
         iban: IBAN
@@ -345,6 +347,8 @@ es:
         notice: El usuario/a ha sido borrado
       edit:
         title: Edita usuario/a
+      form:
+        attachment_hint: Sólo se permiten los formatos JPEG y PDF.
       index:
         first_paragraph: Aquí puedes %{url}, editar y borar usuarios.
         new_user: Crea nuevo usuario/a
@@ -1198,6 +1202,7 @@ es:
   model:
     delivery:
       each_stock_article_must_be_unique: Los artículos de stock no pueden ser listados más de una vez.
+    invalid_mime: tiene un tipo de MIME inválido (%{mime})
     membership:
       no_admin_delete: No te puedes salir de este grupo porque eres el último adimistrador/a.
     user:

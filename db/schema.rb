@@ -519,6 +519,8 @@ ActiveRecord::Schema.define(version: 2021_02_05_090257) do
     t.datetime "last_activity"
     t.datetime "deleted_at"
     t.string "iban"
+    t.string "attachment_mime"
+    t.binary "attachment_data", limit: 16777215
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["nick"], name: "index_users_on_nick", unique: true
   end
