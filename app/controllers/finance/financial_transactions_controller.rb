@@ -1,6 +1,7 @@
 class Finance::FinancialTransactionsController < ApplicationController
-  before_action :authenticate_finance
+  before_action :authenticate_finance, except: [:create]
   before_action :find_ordergroup, :except => [:new_collection, :create_collection, :index_collection]
+  before_action :authenticate_finance_or_self_service_and_own_ordergroup, only: [:create]
   inherit_resources
   #  belongs_to :ordergroup
 
@@ -49,14 +50,24 @@ class Finance::FinancialTransactionsController < ApplicationController
     @financial_transaction = FinancialTransaction.new(params[:financial_transaction])
     @financial_transaction.user = current_user
     if @financial_transaction.ordergroup
-      @financial_transaction.add_transaction!
+      @financial_transaction = @financial_transaction.add_transaction!
     else
       @financial_transaction.save!
     end
-    redirect_to finance_group_transactions_path(@ordergroup), notice: I18n.t('finance.financial_transactions.controller.create.notice')
+
+    respond_to do |format|
+      format.js
+      format.html { redirect_to finance_group_transactions_path(@ordergroup), notice: I18n.t('finance.financial_transactions.controller.create.notice') }
+    end
   rescue ActiveRecord::RecordInvalid => error
-    flash.now[:alert] = error.message
-    render :action => :new
+    @error = error
+    respond_to do |format|
+      format.js
+      format.html do
+        flash.now[:alert] = error.message
+        render :action => :new
+      end
+    end
   end
 
   def destroy
@@ -130,5 +141,13 @@ class Finance::FinancialTransactionsController < ApplicationController
     else
       @foodcoop = true
     end
+  end
+
+  def authenticate_finance_or_self_service_and_own_ordergroup
+    current_user.role_finance? || (
+      FoodsoftConfig[:use_self_service] &&
+      !@ordergroup.nil? &&
+      @ordergroup.member?(current_user)
+    )
   end
 end

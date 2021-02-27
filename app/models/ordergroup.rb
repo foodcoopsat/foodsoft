@@ -85,6 +85,7 @@ class Ordergroup < Group
   # Creates a new FinancialTransaction for this Ordergroup and updates the account_balance accordingly.
   # Throws an exception if it fails.
   def add_financial_transaction!(amount, note, user, transaction_type, link = nil, group_order = nil)
+    t = nil
     transaction do
       t = FinancialTransaction.new(ordergroup: self, amount: amount, note: note, user: user, financial_transaction_type: transaction_type, financial_link: link, group_order: group_order)
       t.save!
@@ -95,6 +96,8 @@ class Ordergroup < Group
       end
       t
     end
+
+    t
   end
 
   def update_stats!

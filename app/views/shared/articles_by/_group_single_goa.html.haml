@@ -1,7 +1,10 @@
-%tr{class: [cycle('even', 'odd', :name => 'articles'), if goa.result == 0 then 'unavailable' end], id: "goa_#{goa.id}"}
+%tr{class: [cycle('even', 'odd', :name => 'articles'), if goa.result == 0 && !self_service then 'unavailable' end, if self_service && goa.order_article.availability > 0 then 'abundance' end, if self_service && goa.order_article.availability < 0 then 'shortage' end], id: goa.new_record? ? "new_goa_#{goa.order_article_id}" : "goa_#{goa.id}"}
   %td.name= goa.order_article.article.name
   %td= goa.order_article.article.unit
   %td.center= "#{goa.quantity} + #{goa.tolerance}"
+  - if self_service
+    %td.ml-1.availability.center{:data => {:toggle => :tooltip, :title => "#{render 'shared/articles_by/availability_explanation', goa: goa}"}}
+      = "#{goa.order_article.availability}"
   %td.center.input-delta= group_order_article_edit_result(goa)
   %td.symbol &times;
   %td= number_to_currency(goa.order_article.price.fc_price)

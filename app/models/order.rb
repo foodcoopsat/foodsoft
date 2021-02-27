@@ -3,7 +3,9 @@ class Order < ApplicationRecord
 
   # Associations
   has_many :order_articles, :dependent => :destroy
+  has_many :received_order_articles, -> { where 'units_received > 0' }, class_name: 'OrderArticle'
   has_many :articles, :through => :order_articles
+  has_many :received_articles, through: :received_order_articles, class_name: 'Article', source: :article
   has_many :group_orders, :dependent => :destroy
   has_many :ordergroups, :through => :group_orders
   has_many :users_ordered, :through => :ordergroups, :source => :users

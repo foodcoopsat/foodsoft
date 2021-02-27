@@ -60,6 +60,8 @@ Rails.application.routes.draw do
       get :archive, on: :collection
     end
 
+    resources :self_service, only: [:index]
+
     resources :group_order_articles
 
     resources :order_comments, only: [:new, :create]
