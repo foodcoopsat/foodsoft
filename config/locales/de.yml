@@ -862,6 +862,9 @@ de:
         title: Banktransaktionen für %{name} importieren
       index:
         title: Bankkonten
+    bank_gateways:
+      callback:
+        notice: 'Es wurden %{count} neue Transaktionen importiert.'
     bank_transactions:
       index:
         assign_unlinked_transactions: Transaktionen zuordenen
@@ -976,6 +979,7 @@ de:
       unpaid:
         invoices_sum: Gesamtsumme
         invoices_text: Verwendungszweck
+        pay: Ausgewählte Rechnungen bezahlen
         title: Unbezahlte Rechnungen
     ordergroups:
       index:

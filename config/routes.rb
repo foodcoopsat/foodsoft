@@ -214,6 +214,14 @@ Rails.application.routes.draw do
         resources :bank_transactions, as: :transactions
       end
 
+      resources :bank_gateways do
+        member do
+          get :callback
+          get :import
+          post :pay
+        end
+      end
+
       resources :bank_transactions, only: [:index, :show]
     end
 

@@ -6,8 +6,10 @@ class BankAccountInformationImporter
   def import!(content)
     return nil if content.empty?
 
-    data = JSON.parse content, symbolize_names: true
+    import_data JSON.parse(content, symbolize_names: true)
+  end
 
+  def import_data!(data)
     return 0 if data.empty?
 
     booked = data.fetch(:transactions, {}).fetch(:booked, [])
@@ -24,23 +26,23 @@ class BankAccountInformationImporter
                                                                                                      iban: entityAccount && entityAccount[:iban],
                                                                                                      reference: t[:remittanceInformationUnstructured],
                                                                                                      text: entityName,
-                                                                                                     receipt: t[:additionalInformation],
+                                                                                                     receipt: t[:additionalInformation]
                                                                                                    })
       ret += 1
     end
 
-    balances = Hash[data[:balances] ? data[:balances].map { |b| [b[:balanceType], b[:balanceAmount]] } : []]
+    balances = (data[:balances] ? data[:balances].map { |b| [b[:balanceType], b[:balanceAmount]] } : []).to_h
     balance = balances.values.first
     %w(closingBooked expected authorised openingBooked interimAvailable forwardAvailable nonInvoiced).each do |type|
       value = balances[type]
-      if value then
+      if value
         balance = value
         break
       end
     end
 
     @bank_account.balance = parse_account_information_amount(balance) || @bank_account.bank_transactions.sum(:amount)
-    @bank_account.import_continuation_point = booked.first&.fetch(:entryReference, nil)
+    @bank_account.import_continuation_point = booked.first&.fetch(:entryReference, nil) unless booked.empty?
     @bank_account.last_import = Time.now
     @bank_account.save!
 

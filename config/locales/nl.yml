@@ -847,6 +847,9 @@ nl:
         title: Importeer banktransacties voor %{name}
       index:
         title: Bankrekeningen
+    bank_gateways:
+      callback:
+        notice: '%{count} nieuwe transacties zijn geïmporteerd'
     bank_transactions:
       index:
         assign_unlinked_transactions: Transacties toewijzen
