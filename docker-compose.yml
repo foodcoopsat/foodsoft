@@ -6,6 +6,8 @@ services:
     command: sh -c 'bundle install;./proc-start web'
     ports:
       - "4000:3000"
+    depends_on:
+      - mariadb
   foodsoft_worker:
     # image: ghcr.io/foodcoopsat/foodsoft:2023-04-12v1
     image: foodsoft:latest
@@ -19,9 +21,11 @@ services:
       - foodsoft:/usr/src/app/storage
       - ${PWD}/dev_config/app_config.yml:/usr/src/app/config/app_config.yml
       - ${PWD}/config/storage.yml.SAMPLE:/usr/src/app/config/storage.yml
-      - ${PWD}/config/initializers:/usr/src/app/config/initializers
       - ${PWD}/config/environments/development.rb.SAMPLE:/usr/src/app/config/environments/production.rb
+      - ${PWD}/config/initializers:/usr/src/app/config/initializers
       - ${PWD}/app:/usr/src/app/app
+      - ${PWD}/plugins:/usr/src/app/plugins
+      - ${PWD}/db:/usr/src/app/db
       - ${PWD}/docker-entrypoint.sh:/usr/src/app/docker-entrypoint.sh
     environment:
       # - DATABASE_URL=mysql2://root:secret@mariadb/development?encoding=utf8mb4
@@ -46,6 +50,9 @@ services:
 
   mariadb:
     image: mariadb:10.11
+    configs:
+      - source: mariadb-myconf.cnf
+        target: /etc/mysql/conf.d/01_myconf.cnf
     environment:
       - MYSQL_ROOT_PASSWORD=secret
       - MYSQL_DATABASE=development
@@ -71,3 +78,6 @@ volumes:
   mariadb:
   foodsoft:
 
+configs:
+  mariadb-myconf.cnf:
+    file: ./configs/mariadb-myconf.cnf
