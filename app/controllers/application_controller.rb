@@ -9,7 +9,7 @@ class ApplicationController < ActionController::Base
   protect_from_forgery
   before_action :authenticate, :set_user_last_activity, :store_controller, :items_per_page
   after_action  :remove_controller
-  around_action :set_time_zone, :set_currency
+  around_action :set_time_zone, :set_currency, :set_log_level
 
   # needed for linking to attachments on locals storage 
   before_action do
@@ -97,5 +97,15 @@ class ApplicationController < ActionController::Base
     yield
   ensure
     ::I18n.backend.store_translations(::I18n.locale, number: { currency: { format: { unit: old_currency } } })
+  end
+
+  def set_log_level
+    old_log_levl = Rails.logger.level
+    if params[:controller] == 'messages' and params[:action] == 'create'
+      Rails.logger.level = 0
+    end
+    yield
+  ensure
+      Rails.logger.level = old_log_levl
   end
 end
