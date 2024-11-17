@@ -50,8 +50,6 @@ class Invoice < ApplicationRecord
   end
 
   def expected_amount(type = :without_markup)
-    return net_amount unless orders.any?
-
     orders_sum(type) + orders_transport_sum + deliveries_sum(type)
   end
 
