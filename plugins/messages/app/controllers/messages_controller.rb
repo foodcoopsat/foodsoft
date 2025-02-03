@@ -31,13 +31,22 @@ class MessagesController < ApplicationController
 
   # Creates a new message.
   def create
-    @message = @current_user.send_messages.new(params[:message])
-    if @message.save
-      DeliverMessageJob.perform_later(@message)
-      redirect_to messages_url, notice: I18n.t('messages.create.notice')
-    else
-      render action: 'new'
+    ActiveRecord::Base.transaction do
+      @current_user.with_lock do
+        @message = @current_user.send_messages.new(params[:message])
+        Rails.logger.info "Message column names: #{@message.class.column_names.inspect}"
+        if @message.save
+          DeliverMessageJob.perform_later(FoodsoftConfig.scope,@message)
+          redirect_to messages_url, notice: I18n.t('messages.create.notice')
+        else
+          Rails.logger.info "Message validation failed with: #{@message.errors.inspect}"
+          render :new, status: :unprocessable_entity
+          raise ActiveRecord::Rollback
+        end
+      end
     end
+  rescue ActiveRecord::RecordInvalid, ActiveRecord::Rollback => e
+    render :new, status: :unprocessable_entity
   end
 
   # Shows a single message.
