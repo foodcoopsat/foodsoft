@@ -303,6 +303,7 @@ GEM
       actionpack (>= 5.0)
       less (~> 2.6.0)
       sprockets (~> 3.0)
+    libv8 (3.16.14.19.1)
     libv8 (3.16.14.19.1-x86_64-linux)
     listen (3.8.0)
       rb-fsevent (~> 0.10, >= 0.10.3)
@@ -334,6 +335,7 @@ GEM
     mime-types-data (3.2023.1205)
     mini_magick (4.12.0)
     mini_mime (1.1.5)
+    mini_portile2 (2.8.9)
     minitest (5.21.2)
     mono_logger (1.1.2)
     msgpack (1.7.2)
@@ -356,6 +358,9 @@ GEM
     net-smtp (0.4.0.1)
       net-protocol
     nio4r (2.7.0)
+    nokogiri (1.15.5)
+      mini_portile2 (~> 2.8.2)
+      racc (~> 1.4)
     nokogiri (1.15.5-x86_64-linux)
       racc (~> 1.4)
     parallel (1.24.0)
@@ -637,6 +642,7 @@ GEM
     zeitwerk (2.6.12)
 
 PLATFORMS
+  aarch64-linux
   x86_64-linux
 
 DEPENDENCIES
@@ -736,4 +742,4 @@ DEPENDENCIES
   whenever
 
 BUNDLED WITH
-   2.4.22
+  4.0.3
