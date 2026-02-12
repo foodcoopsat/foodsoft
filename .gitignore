@@ -41,3 +41,4 @@ Capfile
 config/deploy
 config/deploy.rb
 Gemfile.capistrano*
+dev_data/

@@ -1,0 +1,25 @@
+log:
+  level: DEBUG
+providers:
+  docker:
+    exposedbydefault: false
+  file:
+    directory: "/etc/traefik/conf.d"
+    watch: true
+
+api:
+  dashboard: true
+  debug: true
+  insecure: false
+entrypoints:
+  http:
+    address: :80
+  https:
+    address: :443
+    transport:
+      respondingTimeouts:
+        readTimeout: 600
+
+serversTransport:
+  insecureSkipVerify: true
+

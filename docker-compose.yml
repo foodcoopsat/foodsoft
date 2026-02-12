@@ -1,47 +1,18 @@
-services:
-
-  foodsoft-resque-ui:
-    extends: foodsoft_worker
-    command: ./bin/resque-web -p 8282 -F -d -r  redis:6379 --app-dir /tmp/resque
-    labels:
-      traefik.enable: "true"
-      traefik.http.routers.foodsoft_resque_ui.entrypoints: https
-      traefik.http.routers.foodsoft_resque_ui.rule: Host(`resque.local.at`)
-      traefik.http.routers.foodsoft_resque_ui.tls: "true"
-      traefik.http.services.foodsoft_resque_ui.loadbalancer.server.port: 8282
-
-  foodsoft:
-    extends: foodsoft_worker
-    command: sh -c 'bundle install;./proc-start web'
-    ports:
-      - "4000:3000"
-    labels:
-      traefik.enable: "true"
-      traefik.http.routers.foodsoft.entrypoints: https
-      traefik.http.routers.foodsoft.rule: Host(`app.local.at`)
-      traefik.http.routers.foodsoft.tls: "true"
-      traefik.http.services.foodsoft.loadbalancer.server.port: 3000
-
-  foodsoft_worker:
+x-common: &common_foodsoft
     build:
       context: .
       dockerfile: Dockerfile
-    command: ./proc-start worker
     volumes:
       - foodsoft:/usr/src/app/storage
-      - ${PWD}/config/:/usr/src/app/config/
       - ${PWD}/config/storage.yml.SAMPLE:/usr/src/app/config/storage.yml
       - ${PWD}/config/initializers:/usr/src/app/config/initializers
       - ${PWD}/config/environments/development.rb.SAMPLE:/usr/src/app/config/environments/production.rb
-      - ${PWD}/dev_config/app_config.yml:/usr/src/app/config/app_config.yml
-      - ${PWD}/dev_config/database.yml:/usr/src/app/config/database.yml
+      - ${PWD}/config/app_config.yml.SAMPLE:/usr/src/app/app_config.defaults.yml
       - ${PWD}/app:/usr/src/app/app
       - ${PWD}/plugins:/usr/src/app/plugins
       - ${PWD}/docker-entrypoint.sh:/usr/src/app/docker-entrypoint.sh
     environment:
-      # - DATABASE_URL=mysql2://root:secret@mariadb/development?encoding=utf8mb4
       - REDIS_URL=redis://redis:6379
-      # - TEST_DATABASE_URL=mysql2://root:secret@mariadb/test?encoding=utf8mb4
       - DATABASE_CLEANER_ALLOW_REMOTE_DATABASE_URL=true
       - MAILCATCHER_ADDRESS=mailcatcher
       - MAILCATCHER_PORT=25
@@ -53,9 +24,72 @@ services:
       - FOODSOFT_DB_USER=root
       - FOODSOFT_DB_PASSWORD=secret
       - RAILS_FORCE_SSL=false
+
+x-mariadb: &common_mariadb
+    image: mariadb:10.11
+    environment:
+      - MYSQL_ROOT_PASSWORD=secret
+      - MYSQL_DATABASE=development
+    volumes:
+      - mariadb:/var/lib/mysql
+
+
+services:
+
+  init-db:
+    <<: *common_mariadb
+    command: sh -c "mariadb -h mariadb -u root --password=secret -e 'CREATE DATABASE foodsoft_demo;' || true"
     depends_on:
-      - mariadb
-      - redis
+      mariadb:
+        condition: service_started
+
+  init-foodsoft-db:
+    <<: *common_foodsoft
+    command: sh -c "bundle exec rake db:setup || true"
+    depends_on:
+      init-db:
+        condition: service_completed_successfully
+
+  foodsoft-resque-ui:
+    <<: *common_foodsoft
+    command: ./bin/resque-web -p 8282 -F -d -r  redis:6379 --app-dir /tmp/resque
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.foodsoft_resque_ui.entrypoints: https
+      traefik.http.routers.foodsoft_resque_ui.rule: Host(`resque.local.at`)
+      traefik.http.routers.foodsoft_resque_ui.tls: "true"
+      traefik.http.services.foodsoft_resque_ui.loadbalancer.server.port: 8282
+    depends_on:
+      redis:
+        condition: service_started
+      init-foodsoft-db:
+        condition: service_completed_successfully
+
+  foodsoft:
+    <<: *common_foodsoft
+    command: sh -c 'bundle install;./proc-start web'
+    ports:
+      - "4000:3000"
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.foodsoft.entrypoints: https
+      traefik.http.routers.foodsoft.rule: Host(`app.local.at`)
+      traefik.http.routers.foodsoft.tls: "true"
+      traefik.http.services.foodsoft.loadbalancer.server.port: 3000
+    depends_on:
+      redis:
+        condition: service_started
+      init-foodsoft-db:
+        condition: service_completed_successfully
+
+  foodsoft_worker:
+    <<: *common_foodsoft
+    command: ./proc-start worker
+    depends_on:
+      redis:
+        condition: service_started
+      init-foodsoft-db:
+        condition: service_completed_successfully
 
   mailcatcher:
     image: tophfr/mailcatcher
@@ -67,24 +101,9 @@ services:
       traefik.http.services.mailcatcher.loadbalancer.server.port: 80
 
   mariadb:
-    image: mariadb:10.11
-    environment:
-      - MYSQL_ROOT_PASSWORD=secret
-      - MYSQL_DATABASE=development
+    <<: *common_mariadb
     ports:
       - 3306:3306
-    volumes:
-      - mariadb:/var/lib/mysql
-      - $PWD/dev_config/mariadb-myconf.cnf:/etc/mysql/conf.d/01_myconf.cnf
-
-  phpmyadmin:
-    image: phpmyadmin/phpmyadmin
-    environment:
-      - PMA_HOST=mariadb
-      - PMA_USER=root
-      - PMA_PASSWORD=secret
-    ports:
-      - "2080:80"
 
   redis:
     image: redis:6.2-alpine
@@ -105,53 +124,20 @@ services:
       traefik.http.routers.api.service: api@internal
       traefik.http.routers.api.tls: "true"
     ports:
-      - target: 25
-        published: 25
-        protocol: tcp
-        mode: host
       - target: 80
         published: 80
-        protocol: tcp
-        mode: host
-      - target: 143
-        published: 143
         protocol: tcp
         mode: host
       - target: 443
         published: 443
         protocol: tcp
         mode: host
-      - target: 465
-        published: 465
-        protocol: tcp
-        mode: host
-      - target: 587
-        published: 587
-        protocol: tcp
-        mode: host
-      - target: 993
-        published: 993
-        protocol: tcp
-        mode: host
-      - target: 4190
-        published: 4190
-        protocol: tcp
-        mode: host
     volumes:
       - accesslog:/accesslog
       - /var/run/docker.sock:/var/run/docker.sock
-      - "./dev_data/certs/:/etc/certs:ro"
-      - "./dev_config/traefik.yaml:/etc/traefik/traefik.yaml:ro"
-      - "./dev_config/traefik.d:/etc/traefik/conf.d:ro"
-
-  mkcert:
-    image: vishnunair/docker-mkcert
-    environment:
-      - domain=app.local.at,traefik.local.at,*.local.at
-    volumes:
-      - ./dev_data/certs/:/root/.local/share/mkcert
-    labels:
-      - "traefik.enable=false"
+      - "${PWD}/dev_data/certs/:/etc/certs:ro"
+      - "${PWD}/dev_config/traefik.yaml:/etc/traefik/traefik.yaml:ro"
+      - "${PWD}/dev_config/traefik.d:/etc/traefik/conf.d:ro"
 
 volumes:
   bundle:

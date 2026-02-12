@@ -22,3 +22,7 @@ rubocop:
 cleanup-routes:
 	git checkout plugins/*/config/routes.rb
 	git checkout config/routes.rb
+
+dev-certs:
+	mkdir -p dev_data/certs 2>>/dev/null || true
+	mkcert -cert-file dev_data/certs/app.local.at.pem -key-file dev_data/certs/app.local.at-key.pem '*.local.at' '*.app.local.at'
