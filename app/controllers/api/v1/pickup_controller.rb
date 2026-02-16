@@ -1,16 +1,14 @@
 class Api::V1::PickupController < Api::V1::BaseController
 
-  @@time_now = Time.now               # for real database
-  #@@time_now = Time.new(2025, 12, 17)  # for local test database
+  #@@time_now = Time.now               # for real database
+  @@time_now = Time.new(2025, 12, 17)  # for local test database
   
   def index
-    ordergroup_id = params.fetch(:ordergroup_id, nil)
-    ordergroup_id = current_user.ordergroup.id unless ordergroup_id 
+    ordergroup_id = params.fetch(:ordergroup_id, current_user.ordergroup.id)
 
     base_scope = GroupOrder
       .includes(group_order_articles: { order_article: :article },
-                order: :supplier, 
-                order: :comments)
+                order: [:supplier, :comments])
       .references(:orders)
       .where(ordergroup_id: ordergroup_id)
       .limit(200)
@@ -37,8 +35,7 @@ class Api::V1::PickupController < Api::V1::BaseController
         }
       )
     )
-
-    render json:
+    render json: 
     {
       group_orders: group_orders.map { |go|
         {
@@ -69,7 +66,8 @@ class Api::V1::PickupController < Api::V1::BaseController
   def show
     result = params.require(:id) 
     if result == "users" 
-      render json: User.undeleted 
+
+      render json: User.undeleted.includes(:ordergroup) 
       {
         users: User.undeleted.map { |user|
           { 
@@ -90,7 +88,7 @@ class Api::V1::PickupController < Api::V1::BaseController
           :comments, 
           order_articles:  { group_order_articles: { group_order: :ordergroup }}
         ) 
-        render json: 
+        render json: #orders,  each_serializer: PickupAllOgSerializer
         { 
           orders: orders.map { |order|
             { 
@@ -152,6 +150,7 @@ class Api::V1::PickupController < Api::V1::BaseController
     comment = params.fetch(:comment, "")
     if comment && order_id
       Order.transaction do
+        # logger.debug "  order id: #{order_id}"
         order = Order.find(order_id)
         order.comments.create(user: current_user, text:comment)
       end
@@ -159,11 +158,14 @@ class Api::V1::PickupController < Api::V1::BaseController
     
     GroupOrderArticle.transaction do
       params.fetch(:updates, {}).each do |article_id, property_updates| 
+        #logger.debug "update #{article_id} => #{property_updates}"
         goa = GroupOrderArticle.find(article_id)
         property_updates.each do |property, value|
+          #logger.debug "update_attribute #{property} => #{value}"
           goa.update_attribute(property, value) # allows updates for closed orders, skips validation
-          if property == "result"
+          if property == "result" && params.fetch(:update_result_sum, true)
             total = GroupOrderArticle.where(order_article_id: goa.order_article_id).sum(:result)
+            #logger.debug "  result total: #{total}"
             goa.order_article.update!(units_received: total)  
           end
         end
