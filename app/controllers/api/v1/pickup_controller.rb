@@ -66,10 +66,13 @@ class Api::V1::PickupController < Api::V1::BaseController
   def show
     result = params.require(:id) 
     if result == "users" 
-
-      render json: User.undeleted.includes(:ordergroup) 
+      users = User.undeleted
+      ordergroups = Ordergroup
+        .joins(:memberships)
+        .where(memberships: { user_id: users.map(&:id) })
+      render json:  
       {
-        users: User.undeleted.map { |user|
+        users: users.map { |user|
           { 
             id: user.id, 
             name: user.name,
