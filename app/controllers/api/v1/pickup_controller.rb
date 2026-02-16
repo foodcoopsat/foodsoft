@@ -1,7 +1,7 @@
 class Api::V1::PickupController < Api::V1::BaseController
 
-  #@@time_now = Time.now               # for real database
-  @@time_now = Time.new(2025, 12, 17)  # for local test database
+  @@time_now = Time.now               # for real database
+  #@@time_now = Time.new(2025, 12, 17)  # for local test database
   
   def index
     ordergroup_id = params.fetch(:ordergroup_id, current_user.ordergroup.id)
