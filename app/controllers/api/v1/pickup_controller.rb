@@ -88,6 +88,7 @@ class Api::V1::PickupController < Api::V1::BaseController
       if order_ids.any?
         #logger.debug "order-ids:  #{order_ids}"
         orders = Order.where(id: order_ids).includes(
+          :supplier,
           :comments, 
           order_articles:  { group_order_articles: { group_order: :ordergroup }}
         ) 
