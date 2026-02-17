@@ -66,10 +66,12 @@ class Api::V1::PickupController < Api::V1::BaseController
   def show
     result = params.require(:id) 
     if result == "users" 
-      users = User.undeleted
-      ordergroups = Ordergroup
-        .joins(:memberships)
-        .where(memberships: { user_id: users.map(&:id) })
+      users = User.undeleted 
+        .left_outer_joins(memberships: :group) 
+        .where("groups.type = 'Ordergroup' OR groups.id IS NULL") 
+        .select( 'users.*', 
+                 'groups.id AS ordergroup_id', 
+                 'groups.name AS ordergroup_name' ) 
       render json:  
       {
         users: users.map { |user|
@@ -78,8 +80,8 @@ class Api::V1::PickupController < Api::V1::BaseController
             name: user.name,
             email: user.email, 
             locale: user.locale, 
-            ordergroup_name: user.ordergroup_name, 
-            ordergroup_id: user.ordergroup ? user.ordergroup.id : -1,
+            ordergroup_id: user[:ordergroup_id] || nil,
+            ordergroup_name:  user[:ordergroup_name] || nil,
           }
         }
       }
@@ -92,7 +94,7 @@ class Api::V1::PickupController < Api::V1::BaseController
           :comments, 
           order_articles:  { group_order_articles: { group_order: :ordergroup }}
         ) 
-        render json: #orders,  each_serializer: PickupAllOgSerializer
+        render json:
         { 
           orders: orders.map { |order|
             { 
@@ -129,7 +131,7 @@ class Api::V1::PickupController < Api::V1::BaseController
             state: %w[finished received closed],
             pickup: @@time_now.weeks_ago(params.fetch(:weeks, 5))..@@time_now.weeks_ago(-1)
         ).includes(:supplier)
-        render json: # orders
+        render json:
         {
           orders: orders.map { |order|
             { # only overview for order selection, no article details
