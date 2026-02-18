@@ -1,8 +1,22 @@
 - title t('.title')
 
 = render 'messages/actionbar', active: 'message_threads'
+<<<<<<< HEAD
+=======
+-# General threads (group = nil)
+= render 'groupmessage_threads',
+   threads: @threads_by_group.dig(nil, :threads) || [],
+   total_count: @threads_by_group.dig(nil, :total_count) || 0,
+   name: t('.general'),
+   id: 0
+>>>>>>> 4279c55d (fix messsage_threads view if now messages)
 
-= render 'groupmessage_threads', group: nil, name: t('.general'), id: 0
+-# General threads (group = nil)
+= render 'groupmessage_threads',
+   threads: @threads_by_group.dig(nil, :threads) || [],
+   total_count: @threads_by_group.dig(nil, :total_count) || 0,
+   name: t('.general'),
+   id: 0
 
 - for group in @groups
   = render 'groupmessage_threads', group: group, name: group.name, id: group.id
