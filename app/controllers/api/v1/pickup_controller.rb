@@ -3,16 +3,16 @@ class Api::V1::PickupController < Api::V1::BaseController
   @@time_now = Time.now               # for real database
   #@@time_now = Time.new(2025, 12, 17)  # for local test database
   
-  def index
-    ordergroup_id = params.fetch(:ordergroup_id, nil) || current_user.ordergroup.id
-
+  def index   
+   # get group orders for ordergroup with ordergroup_id
+    ordergroup_id = params.fetch(:ordergroup_id, nil) || 
+      (current_user.ordergroup ? current_user.ordergroup.id : nil)
     base_scope = GroupOrder
       .includes(group_order_articles: { order_article: :article },
                 order: [:supplier, :comments])
       .references(:orders)
       .where(ordergroup_id: ordergroup_id)
       .limit(200)
-
     group_orders = base_scope.where(
       orders: {
         state: "open",
@@ -61,11 +61,10 @@ class Api::V1::PickupController < Api::V1::BaseController
     }
   end
 
-
-
   def show
     result = params.require(:id) 
     if result == "users" 
+      # get all active users and their ordergroup (if member of an ordergroup)  
       users = User.undeleted 
         .left_outer_joins(memberships: :group) 
         .where("groups.type = 'Ordergroup' OR groups.id IS NULL") 
@@ -86,9 +85,9 @@ class Api::V1::PickupController < Api::V1::BaseController
         }
       }
     elsif result == "orders"
+      # get orders for all ordergroups
       order_ids = params.fetch(:ids, "").split(",").map(&:to_i)
       if order_ids.any?
-        #logger.debug "order-ids:  #{order_ids}"
         orders = Order.where(id: order_ids).includes(
           :supplier,
           :comments, 
@@ -126,7 +125,8 @@ class Api::V1::PickupController < Api::V1::BaseController
             }
           }
         }
-      else # no order ids specified   
+      else 
+        # no order ids specified: get overview for order selection   
         orders = Order.where(
             state: %w[finished received closed],
             pickup: @@time_now.weeks_ago(params.fetch(:weeks, 5))..@@time_now.weeks_ago(-1)
@@ -148,30 +148,23 @@ class Api::V1::PickupController < Api::V1::BaseController
     end
   end
 
-
-
-
   def update
+    # update GroupOrderArticle attributes like received and create order comments
     order_id = params.require(:id)
     comment = params.fetch(:comment, "")
     if comment && order_id
       Order.transaction do
-        # logger.debug "  order id: #{order_id}"
         order = Order.find(order_id)
         order.comments.create(user: current_user, text:comment)
       end
     end
-    
     GroupOrderArticle.transaction do
       params.fetch(:updates, {}).each do |article_id, property_updates| 
-        #logger.debug "update #{article_id} => #{property_updates}"
         goa = GroupOrderArticle.find(article_id)
         property_updates.each do |property, value|
-          #logger.debug "update_attribute #{property} => #{value}"
           goa.update_attribute(property, value) # allows updates for closed orders, skips validation
           if property == "result" && params.fetch(:update_result_sum, true)
             total = GroupOrderArticle.where(order_article_id: goa.order_article_id).sum(:result)
-            #logger.debug "  result total: #{total}"
             goa.order_article.update!(units_received: total)  
           end
         end
