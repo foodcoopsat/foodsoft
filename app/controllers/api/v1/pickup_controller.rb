@@ -1,8 +1,5 @@
 class Api::V1::PickupController < Api::V1::BaseController
-
-  @@time_now = Time.now               # for real database
-  #@@time_now = Time.new(2025, 12, 17)  # for local test database
-  
+ 
   def index   
    # get group orders for ordergroup with ordergroup_id
     ordergroup_id = params.fetch(:ordergroup_id, nil) || 
@@ -17,21 +14,21 @@ class Api::V1::PickupController < Api::V1::BaseController
       orders: {
         state: "open",
         pickup: nil, # z.B. Leergut Rückgabe
-        ends: @@time_now.weeks_ago(1)..@@time_now.next_year
+        ends: last_week
       }
     ).or(
       base_scope.where(
         orders: {
           state: "open",
           supplier_id: nil, # Lager
-          ends: @@time_now.weeks_ago(1)..@@time_now.next_year
+          ends: last_week
         }
       )  
     ).or(
       base_scope.where(
         orders: {
           state: %w[finished received closed],
-          pickup: @@time_now.weeks_ago(params.fetch(:weeks, 5))..@@time_now.weeks_ago(-1)
+          pickup: last_weeks
         }
       )
     )
@@ -129,7 +126,7 @@ class Api::V1::PickupController < Api::V1::BaseController
         # no order ids specified: get overview for order selection   
         orders = Order.where(
             state: %w[finished received closed],
-            pickup: @@time_now.weeks_ago(params.fetch(:weeks, 5))..@@time_now.weeks_ago(-1)
+            pickup: last_weeks
         ).includes(:supplier)
         render json:
         {
@@ -171,4 +168,23 @@ class Api::V1::PickupController < Api::V1::BaseController
       end
     end
   end
+
+  private
+
+  def time_now
+    if Rails.env.development?
+      Time.new(2025, 12, 17)
+    else
+      Time.current
+    end
+  end
+
+  def last_week
+    time_now.weeks_ago(1)..time_now.next_year
+  end
+
+  def last_weeks
+    time_now.weeks_ago(params.fetch(:weeks, 5))..time_now.weeks_ago(-1)
+  end
+
 end
