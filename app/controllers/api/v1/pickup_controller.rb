@@ -51,7 +51,8 @@ class Api::V1::PickupController < Api::V1::BaseController
               deposit: goa.order_article.article.deposit,
               ordered: goa.quantity,
               tolerance: goa.tolerance, 
-              received: goa.result,   }
+              received: goa.result,   
+            }
           }
         }
       }         
@@ -62,12 +63,20 @@ class Api::V1::PickupController < Api::V1::BaseController
     result = params.require(:id) 
     if result == "users" 
       # get all active users and their ordergroup (if member of an ordergroup)  
-      users = User.undeleted 
-        .left_outer_joins(memberships: :group) 
-        .where("groups.type = 'Ordergroup' OR groups.id IS NULL") 
-        .select( 'users.*', 
-                 'groups.id AS ordergroup_id', 
-                 'groups.name AS ordergroup_name' ) 
+      ordergroup_subquery = Membership
+        .joins(:group)
+        .where(groups: { type: "Ordergroup" })
+        .select("memberships.user_id, groups.*")
+      users = User.undeleted
+        .joins(
+          "LEFT JOIN (#{ordergroup_subquery.to_sql}) AS ordergroups
+          ON ordergroups.user_id = users.id"
+        )     
+        .select(
+          "users.*,
+          ordergroups.id   AS ordergroup_id,
+          ordergroups.name AS ordergroup_name"
+        )
       render json:  
       {
         users: users.map { |user|
@@ -184,7 +193,7 @@ class Api::V1::PickupController < Api::V1::BaseController
   end
 
   def last_weeks
-    time_now.weeks_ago(params.fetch(:weeks, 5))..time_now.weeks_ago(-1)
+    time_now.weeks_ago(params.fetch(:weeks, 5))..time_now.weeks_since(1)
   end
 
 end
