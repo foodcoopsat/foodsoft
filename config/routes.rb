@@ -12,7 +12,7 @@ Rails.application.routes.draw do
 
   root to: 'sessions#redirect_to_foodcoop', as: nil
 
-  scope '/:foodcoop', constraints: {foodcoop: /__FOODCOOPS__/} do
+  scope '/:foodcoop', constraints: {foodcoop: /demo/} do
     use_doorkeeper
 
     # Root path
