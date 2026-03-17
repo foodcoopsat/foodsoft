@@ -110,6 +110,14 @@ class Mailer < ActionMailer::Base
          subject: I18n.t('mailer.not_enough_users_assigned.subject', task: task.name)
   end
 
+  def failure_in_unattended_bank_import(bankgateway)
+    @bankgateway = bankgateway
+    @user = bankgateway.unattended_user
+
+    mail to: @user,
+      subject: I18n.t('mailer.failure_in_unattended_bank_import.subject', bankgateway: bankgateway.name)
+  end
+
   def mail(args)
     args[:message_id] ||= "<#{Mail.random_tag}@#{default_url_options[:host]}>"
     args[:subject] = "[#{FoodsoftConfig[:name]}] #{args[:subject]}"
