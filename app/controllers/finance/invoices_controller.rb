@@ -112,6 +112,7 @@ class Finance::InvoicesController < ApplicationController
           amount: i.amount.to_s
         },
         debtorAccount: {
+          currency: 'EUR',
           iban: i.supplier.supplier_category.bank_account.iban
         },
         creditorName: i.supplier.name,
