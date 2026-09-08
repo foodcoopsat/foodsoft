@@ -53,7 +53,8 @@ class Api::V1::PickupController < Api::V1::BaseController
               tolerance: goa.tolerance, 
               received: goa.result,   
             }
-          }
+          },
+          comments: go.order.comments,
         }
       }         
     }
