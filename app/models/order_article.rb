@@ -219,7 +219,7 @@ class OrderArticle < ApplicationRecord
   def init_from_balancing
     return unless order.present? && order.finished?
 
-    self.article_version = article_version.article.article_versions.first
+    self.article_version = article_version.article.latest_article_version
   end
 
   def update_or_create_article_version(version_attributes, original_article_version)
