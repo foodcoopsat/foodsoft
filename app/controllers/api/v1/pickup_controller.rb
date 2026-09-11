@@ -1,4 +1,4 @@
-class Api::V1::PickupController < Api::V1::BaseController
+class Api::V1::PickupController < Api::BaseController
  
   def index   
    # get group orders for ordergroup with ordergroup_id

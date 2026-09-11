@@ -1,4 +1,4 @@
-class Api::V1::PrinterController < Api::V1::BaseController
+class Api::V1::PrinterController < Api::BaseController
   include Concerns::SendOrderPdf
   before_action -> { require_plugin_enabled FoodsoftPrinter }
 
