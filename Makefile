@@ -1,6 +1,6 @@
 .PHONY: image-dev image-prod image-prod-dev
 
-IMAGE_NAME=mortbauer/foodsoft
+IMAGE_NAME=ghcr.io/foodcoopsat/foodsoft
 IMAGE_TAG:=latest
 BUILD_ARGS:= --build-arg REVISION="$(shell git rev-parse HEAD)" --build-arg BUILDTIME="$(shell date --rfc-3339=seconds)"
 

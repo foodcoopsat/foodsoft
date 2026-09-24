@@ -1,4 +1,10 @@
-FROM ruby:2.7.8 AS builder
+FROM ruby:2.7.8-bullseye AS builder
+
+# Fix for Debian Bullseye EOL: update apt sources to archive repository
+# Bullseye security updates are no longer available, so we disable them
+RUN sed -i 's|^deb http://.*debian.org/debian|deb http://archive.debian.org/debian|' /etc/apt/sources.list && \
+    sed -i 's|^deb http://.*debian.org/debian-security|# deb http://archive.debian.org/debian-security|' /etc/apt/sources.list && \
+    sed -i 's|^deb http://.*debian.org/debian|deb http://archive.debian.org/debian|' /etc/apt/sources.list.d/debian.sources 2>/dev/null || true
 
 RUN supercronicUrl=https://github.com/aptible/supercronic/releases/download/v0.1.3/supercronic-linux-amd64 && \
     supercronicBin=/usr/local/bin/supercronic && \
@@ -17,6 +23,9 @@ WORKDIR /usr/src/app
 
 RUN --mount=type=cache,target=/var/cache/apt/ \
     buildDeps='libmagic-dev mariadb-server nodejs' && \
+    # Fix for Debian Bullseye EOL: use archive repository
+    # Comment out security repo since bullseye-security is no longer available
+    sed -i 's|^deb http://archive.debian.org/debian-security|# deb http://archive.debian.org/debian-security|' /etc/apt/sources.list 2>/dev/null || true && \
     apt-get update && \
     apt-get install --no-install-recommends -y $buildDeps 
 
