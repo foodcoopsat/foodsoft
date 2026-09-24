@@ -159,7 +159,11 @@ class Mailer < ActionMailer::Base
     message = yield
     message.deliver_now!
   rescue StandardError => e
-    MailDeliveryStatus.create email: message.to[0], message: e.message
+    # Extract recipient info safely, in case message is nil or has issues
+    recipient = message && message.to && message.to.any? ? message.to[0] : 'unknown'
+    MailDeliveryStatus.create email: recipient, message: e.message
+    # Log the error for debugging
+    Rails.logger.error("Email delivery failed: #{e.class} - #{e.message}")
     raise StandardError, e.message
   end
 

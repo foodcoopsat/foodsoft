@@ -93,7 +93,13 @@ Rails.application.configure do
 
   if ENV['SMTP_ADDRESS'].present?
     config.action_mailer.delivery_method = :smtp
-    config.action_mailer.smtp_settings = { address: ENV['SMTP_ADDRESS'] }
+    config.action_mailer.smtp_settings = {
+      address: ENV['SMTP_ADDRESS'],
+      # Timeout settings to prevent network-related hangs
+      open_timeout: (ENV['SMTP_OPEN_TIMEOUT'] || 10).to_i,
+      read_timeout: (ENV['SMTP_READ_TIMEOUT'] || 20).to_i,
+      ssl_timeout: (ENV['SMTP_SSL_TIMEOUT'] || 60).to_i
+    }
     config.action_mailer.smtp_settings[:port] = ENV['SMTP_PORT'] if ENV['SMTP_PORT'].present?
     config.action_mailer.smtp_settings[:domain] = ENV['SMTP_DOMAIN'] if ENV['SMTP_DOMAIN'].present?
     config.action_mailer.smtp_settings[:user_name] = ENV['SMTP_USER_NAME'] if ENV['SMTP_USER_NAME'].present?
@@ -111,8 +117,11 @@ Rails.application.configure do
         ENV['SMTP_OPENSSL_VERIFY_MODE']
     end
   else
-    # Use sendmail as default to avoid ssl cert problems
+    # Use sendmail as default to avoid ssl cert problems and improve reliability
+    # sendmail delivers directly to Postfix's maildrop and is more reliable than smtp to localhost
     config.action_mailer.delivery_method = :sendmail
+    # Optional: set sendmail location if not in PATH
+    # config.action_mailer.sendmail_settings = { location: '/usr/sbin/sendmail' }
   end
 
   # Use default logging formatter so that PID and timestamp are not suppressed.
