@@ -143,6 +143,14 @@ class Mailer < ActionMailer::Base
     super
   end
 
+  # Send a test email for debugging email configuration
+  def test_email(user, target_email)
+    @user = user
+    mail to: target_email,
+         subject: "[Foodsoft] Test Email",
+         from: FoodsoftConfig[:email_sender]
+  end
+
   def self.deliver_now_with_user_locale(user, &block)
     I18n.with_locale(user.settings['profile']['language']) do
       deliver_now(&block)
