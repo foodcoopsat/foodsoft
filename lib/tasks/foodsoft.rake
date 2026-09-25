@@ -120,7 +120,11 @@ namespace :foodsoft do # rubocop:disable Metrics/BlockLength
       rake_say "Processing ALL failed message recipients (#{failed_recipients.count} found)"
     else
       hours = ENV['HOURS'] ? ENV['HOURS'].to_i : 24
-      failed_recipients = MessageRecipient.where(email_state: :failed).where('created_at >= ?', hours.hours.ago)
+      # Filter by messages' created_at since message_recipients doesn't have timestamps
+      failed_recipients = MessageRecipient
+        .where(email_state: :failed)
+        .joins(:message)
+        .where('messages.created_at >= ?', hours.hours.ago)
       rake_say "Processing failed message recipients from last #{hours}h (#{failed_recipients.count} found)"
       rake_say "Use ALL=1 to retry all failed emails, HOURS=x to specify hours"
     end
