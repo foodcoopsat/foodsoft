@@ -39,7 +39,8 @@ class BankTransaction < ApplicationRecord
 
     content = text || ''
     content += "\n" + reference if reference.present?
-    invoices = supplier.invoices.unpaid.select { |i| content.include? i.number }
+    content.delete!(' ')
+    invoices = supplier.invoices.unpaid.select { |i| content.include? i.number.delete(' ') }
     invoices_sum = invoices.map(&:amount).sum
     return false if amount != -invoices_sum
 
