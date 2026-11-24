@@ -67,8 +67,7 @@ namespace :foodsoft do
   desc 'Import and assign bank transactions'
   task import_and_assign_bank_transactions: :environment do
     BankGateway.with_unattended_support.each do |bank_gateway|
-      import_count = bank_gateway.connector.import_unattended
-      rake_say "#{bank_gateway.name}: imported #{import_count}"
+      import_count = import_bank_gateway(bank_gateway)
       next unless import_count
 
       bank_gateway.bank_accounts.each do |ba|
@@ -89,6 +88,20 @@ namespace :foodsoft do
       assign_count = ba.assign_unlinked_transactions
       rake_say "#{ba.name}: imported #{importer.count}, assigned #{assign_count}"
     end
+  end
+
+  # An import that fails must not take the rest of the run down: the person who
+  # configured the gateway is the one who can fix it, so they get told by mail.
+  def import_bank_gateway(bank_gateway)
+    import_count = bank_gateway.connector.import_unattended
+    rake_say "#{bank_gateway.name}: imported #{import_count}"
+    import_count
+  rescue StandardError => e
+    Rails.logger.error "foodsoft:import_and_assign_bank_transactions #{bank_gateway.name}: #{e.class}: #{e.message}"
+    Mailer.deliver_now_with_user_locale(bank_gateway.unattended_user) do
+      Mailer.bank_import_failed(bank_gateway, e.message)
+    end
+    nil
   end
 
   desc 'Prune attachments older than maximum age'

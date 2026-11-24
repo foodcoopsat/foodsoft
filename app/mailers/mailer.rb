@@ -102,6 +102,17 @@ class Mailer < ActionMailer::Base
          subject: I18n.t('mailer.negative_balance.subject')
   end
 
+  # Tells the user a gateway was configured for that its periodic import did
+  # not work out -- only they can fix the login at the bank.
+  def bank_import_failed(bank_gateway, error)
+    @bank_gateway = bank_gateway
+    @user = bank_gateway.unattended_user
+    @error = error
+
+    mail to: @user,
+         subject: I18n.t('mailer.bank_import_failed.subject', bank_gateway: @bank_gateway.name)
+  end
+
   def not_enough_users_assigned(task, user)
     @task = task
     @user = user

@@ -1373,6 +1373,21 @@ de:
 
 
         Grüße sendet die Foodsoft!
+    bank_import_failed:
+      subject: Import des Bankgateways %{bank_gateway} fehlgeschlagen
+      text: |
+        Hallo %{user},
+
+        der periodische Import des Bankgateways "%{bank_gateway}" ist
+        fehlgeschlagen:
+
+        %{error}
+
+        Bitte überprüfe die Konfiguration des Gateways bzw. den Login bei der
+        Bank. Bis dahin werden neue Bankbewegungen der Konten dieses Gateways
+        nicht in %{foodcoop} erscheinen.
+
+        Liebe Grüße von %{foodcoop}.
     negative_balance:
       subject: Gruppenkonto im Minus
       text: |

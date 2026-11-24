@@ -1377,6 +1377,20 @@ en:
 
 
         Greetings, your Foodsoft Team!
+    bank_import_failed:
+      subject: Import at the bank gateway %{bank_gateway} failed
+      text: |
+        Hello %{user},
+
+        the periodic import of the bank gateway "%{bank_gateway}" failed:
+
+        %{error}
+
+        Please check the configuration of the gateway or its login at the bank.
+        Until then, new bank transactions of the accounts belonging to this
+        gateway will not appear in %{foodcoop}.
+
+        Kind regards from %{foodcoop}.
     negative_balance:
       subject: Negative account balance
       text: |

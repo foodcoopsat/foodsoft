@@ -14,6 +14,10 @@ class Finance::BankAccountsController < Finance::BaseController
 
   def import
     @bank_account = BankAccount.find(params[:id])
+    # A gateway is not an import method of its own -- it is started from the
+    # transactions of the account, where the gateway is offered instead.
+    return redirect_to finance_bank_account_transactions_url(@bank_account), alert: t('.no_import_method') if @bank_account.bank_gateway
+
     importer = @bank_account.find_connector
 
     if importer

@@ -1282,6 +1282,20 @@ nl:
         Dit kan maar een keer en uiterlijk tot %{expires}.
 
         Groeten van de foodcoop.
+    bank_import_failed:
+      subject: Import via de bankgateway %{bank_gateway} mislukt
+      text: |
+        Hallo %{user},
+
+        de periodieke import van de bankgateway "%{bank_gateway}" is mislukt:
+
+        %{error}
+
+        Controleer de instellingen van de gateway of de login bij de bank.
+        Tot die tijd komen nieuwe banktransacties van de rekeningen van deze
+        gateway niet in %{foodcoop} terecht.
+
+        Met vriendelijke groet van %{foodcoop}.
     negative_balance:
       subject: Negatief tegoed
       text: |
