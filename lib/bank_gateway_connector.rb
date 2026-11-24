@@ -9,7 +9,7 @@ require 'uri'
 # certificate and eIDAS registration, so it does not live in the foodsoft
 # process). It exposes a single endpoint:
 #
-#   POST /   body: { accounts: [...], callbackUri:, user:, reconfigure: }
+#   POST /   body: { accounts: [...], callbackUri:, payments:, user:, reconfigure: }
 #            -> 201 { Location: ... }   interactive: the user has to authenticate
 #                                        with the bank and we redirect there
 #            -> 200 { result: [...], count: N }   unattended: the data is already
@@ -34,7 +34,7 @@ class BankGatewayConnector
   # Runs without user interaction, using the login the gateway has stored for
   # itself. Used by the periodic import task.
   def import_unattended
-    res = http_post(nil, nil, false, UNATTENDED_TIMEOUT)
+    res = http_post(nil, nil, nil, false, UNATTENDED_TIMEOUT)
     handle_result(res.body) || 0
   end
 
@@ -49,11 +49,12 @@ class BankGatewayConnector
   # @param callback_uri [String, nil] where the gateway redirects to after the
   #   user has logged in at the bank
   # @param user [User, nil] user whose login at the bank to use
+  # @param payments [Array<Hash>, nil] transfers to make before importing
   # @param reconfigure [Boolean] start the onboarding of a new login at the bank
   # @return [String, Integer] URL the user has to follow, or the number of
   #   transactions that were imported right away
-  def import_url(callback_uri, user, reconfigure: false)
-    res = http_post(callback_uri, user, reconfigure, READ_TIMEOUT)
+  def import_url(callback_uri, user, payments: nil, reconfigure: false)
+    res = http_post(callback_uri, user, payments, reconfigure, READ_TIMEOUT)
     return handle_result(res.body) if res.header['Location'].blank?
 
     # The user is sent to this address of the gateway, so it has to be an URL
@@ -102,7 +103,7 @@ class BankGatewayConnector
     bank_account
   end
 
-  def http_post(callback_uri, user, reconfigure, timeout)
+  def http_post(callback_uri, user, payments, reconfigure, timeout)
     data = {
       accounts: @bank_gateway.bank_accounts.map do |ba|
         {
@@ -115,6 +116,7 @@ class BankGatewayConnector
       end
     }
     data[:callbackUri] = callback_uri if callback_uri
+    data[:payments] = payments if payments
     data[:user] = user.id.to_s if user
     data[:reconfigure] = true if reconfigure
 

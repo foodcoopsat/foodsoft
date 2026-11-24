@@ -19,6 +19,11 @@ class Finance::InvoicesController < ApplicationController
 
   def unpaid
     @suppliers = Supplier.includes(:invoices).where('invoices.paid_on IS NULL').references(:invoices)
+    # Invoices can be handed to a bank gateway only when the bank account
+    # configured for their supplier points to one.
+    @bank_gateway = BankGateway.joins(bank_accounts: { supplier_categories: { suppliers: :invoices } })
+                               .where(invoices: { paid_on: nil }).distinct.first
+    @invoice_payments = InvoicePayments.new(Invoice.unpaid.includes(supplier: { supplier_category: :bank_account }))
   end
 
   def show; end

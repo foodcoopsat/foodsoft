@@ -851,6 +851,7 @@ de:
     bank_gateways:
       callback:
         notice: '%{count} neue Transaktionen wurden importiert.'
+        paid: '%{count} Rechnungen wurden von %{bank_gateway} als bezahlt markiert.'
     balancing:
       close:
         alert: 'Ein Fehler ist beim Abrechnen aufgetreten: %{message}'
@@ -1056,11 +1057,16 @@ de:
         title: Rechnungen
       new:
         title: Neue Rechnung anlegen
+      pay:
+        multiple_bank_gateways: Die ausgewählten Rechnungen werden von verschiedenen Bankkonten bezahlt, bitte wähle sie getrennt aus.
       show:
         title: Rechnung %{number}
       unpaid:
         invoices_sum: Gesamtsumme
         invoices_text: Verwendungszweck
+        no_bank_gateway: Die Rechnungen dieser Lieferanten werden nicht über ein Bankgateway bezahlt.
+        pay: Ausgewählte Rechnungen bezahlen
+        pay_confirm: 'Die ausgewählten Rechnungen über %{bank_gateway} bezahlen?'
         title: Unbezahlte Rechnungen
     ordergroups:
       index:

@@ -25,4 +25,14 @@ describe BankGateway do
       expect(bank_gateway).not_to be_can_reconfigure other_user
     end
   end
+
+  describe '#pending_payments' do
+    it { expect(bank_gateway.pending_payments).to eq [] }
+
+    it 'keeps the payments that have been handed to the gateway' do
+      bank_gateway.update! pending_payments: [{ creditorAccount: { iban: 'AT611904300234573201' } }]
+
+      expect(bank_gateway.reload.pending_payments).to eq [{ 'creditorAccount' => { 'iban' => 'AT611904300234573201' } }]
+    end
+  end
 end

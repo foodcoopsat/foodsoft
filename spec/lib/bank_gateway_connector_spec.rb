@@ -75,6 +75,14 @@ describe BankGatewayConnector do
       it { expect { connector.import_url('https://foodcoop.example.org/callback', create(:user)) }.to raise_error(BankGatewayConnector::Error, /redirect/i) }
     end
 
+    it 'sends the transfers to make before importing' do
+      payment = { creditorName: 'Green Groceries', instructedAmount: { amount: '10.00' } }
+      connector.import_url('https://foodcoop.example.org/callback', create(:user), payments: [payment])
+
+      _, payload = sent_request
+      expect(payload).to include(payments: [payment])
+    end
+
     it 'raises the message of the gateway when it refuses' do
       let(:status) { 400 }
       let(:message) { 'Bad Request' }
@@ -161,6 +169,5 @@ describe BankGatewayConnector do
       expect(request['Authorization']).to eq 'secret'
       expect(bank_account.bank_transactions.find_by(external_id: '43').amount).to eq 5
     end
-
   end
 end

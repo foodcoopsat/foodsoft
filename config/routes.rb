@@ -233,6 +233,9 @@ Rails.application.routes.draw do
 
       resources :bank_gateways, only: [] do
         member do
+          # Started from the unpaid invoices page, so a form can carry the
+          # selected invoices.
+          post :import
           get :import
           get :callback
         end

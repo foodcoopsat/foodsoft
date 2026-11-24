@@ -782,6 +782,7 @@ nl:
     bank_gateways:
       callback:
         notice: '%{count} nieuwe transacties zijn geïmporteerd.'
+        paid: '%{count} facturen zijn als betaald gemarkeerd door %{bank_gateway}.'
     balancing:
       close:
         alert: 'Er trad een fout op bij het afrekenen: %{message}'
@@ -985,11 +986,16 @@ nl:
         title: Facturen
       new:
         title: Nieuwe factuur toevoegen
+      pay:
+        multiple_bank_gateways: De geselecteerde facturen worden vanuit verschillende bankrekeningen betaald, selecteer ze apart.
       show:
         title: Factuur %{number}
       unpaid:
         invoices_sum: Totale som
         invoices_text: Referentie
+        no_bank_gateway: De facturen van deze leveranciers worden niet via een bankgateway betaald.
+        pay: Geselecteerde facturen betalen
+        pay_confirm: 'De geselecteerde facturen via %{bank_gateway} betalen?'
         title: Onbetaalde rekeningen
     ordergroups:
       index:

@@ -855,6 +855,7 @@ en:
     bank_gateways:
       callback:
         notice: '%{count} new transactions have been imported.'
+        paid: '%{count} invoices have been marked as paid by %{bank_gateway}.'
     balancing:
       close:
         alert: 'An error occured while accounting: %{message}'
@@ -1060,11 +1061,16 @@ en:
         title: Invoices
       new:
         title: Create new invoice
+      pay:
+        multiple_bank_gateways: The selected invoices are paid from different bank accounts, please select them separately.
       show:
         title: Invoice %{number}
       unpaid:
         invoices_sum: Total sum
         invoices_text: Reference
+        no_bank_gateway: The invoices of this supplier are not paid through a bank gateway.
+        pay: Pay selected invoices
+        pay_confirm: 'Pay the selected invoices through %{bank_gateway}?'
         title: Unpaid invoices
     ordergroups:
       index:
