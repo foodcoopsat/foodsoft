@@ -644,6 +644,12 @@ en:
       password: Password
       tan: TAN
       username: Username
+  bank_gateway_connector:
+    invalid_redirect_url: The bank gateway returned an invalid URL to redirect to.
+    invalid_result_url: 'The bank gateway returned a path to another site than %{host}.'
+    no_accounts: The bank gateway did not return any account data.
+    timeout: 'The import at the bank gateway could not be completed within %{timeout} seconds.'
+    unknown_account: 'The bank gateway returned an account which is not known: %{iban}'
   config:
     hints:
       applepear_url: Website where the apple and pear system for tasks is explained.
@@ -846,6 +852,9 @@ en:
       send: Send
       title: Give feedback
   finance:
+    bank_gateways:
+      callback:
+        notice: '%{count} new transactions have been imported.'
     balancing:
       close:
         alert: 'An error occured while accounting: %{message}'
@@ -942,6 +951,7 @@ en:
       index:
         assign_unlinked_transactions: Assign transactions
         import_transactions: Import
+        import_transactions_reconfigured: '%{name} needs a new login at the bank.'
         title: Bank transactions for %{name} (%{balance})
       show:
         add_financial_link: Add financial link

@@ -582,6 +582,12 @@ nl:
       password: Wachtwoord
       tan: TAN
       username: Gebruikersnaam
+  bank_gateway_connector:
+    invalid_redirect_url: De bankgateway gaf een ongeldige URL om naar door te verwijzen.
+    invalid_result_url: 'De bankgateway gaf een pad naar een andere site dan %{host}.'
+    no_accounts: De bankgateway heeft geen rekeninggegevens teruggegeven.
+    timeout: 'De import bij de bankgateway kon niet binnen %{timeout} seconden worden voltooid.'
+    unknown_account: 'De bankgateway gaf een rekening terug die niet bekend is: %{iban}'
   config:
     hints:
       applepear_url: Website waar het appelpuntensysteem wordt uitgelegd.
@@ -773,6 +779,9 @@ nl:
       text: Deze pagina bestaat niet, sorry!
       title: Pagina niet gevonden
   finance:
+    bank_gateways:
+      callback:
+        notice: '%{count} nieuwe transacties zijn geïmporteerd.'
     balancing:
       close:
         alert: 'Er trad een fout op bij het afrekenen: %{message}'
@@ -867,6 +876,7 @@ nl:
       index:
         assign_unlinked_transactions: Transacties toewijzen
         import_transactions: Importeren
+        import_transactions_reconfigured: '%{name} heeft een nieuwe login bij de bank nodig.'
         title: Banktransacties voor %{name} (%{balance})
       show:
         add_financial_link: Financiële link toevoegen

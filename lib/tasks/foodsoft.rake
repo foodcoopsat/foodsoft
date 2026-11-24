@@ -66,6 +66,17 @@ namespace :foodsoft do
 
   desc 'Import and assign bank transactions'
   task import_and_assign_bank_transactions: :environment do
+    BankGateway.with_unattended_support.each do |bank_gateway|
+      import_count = bank_gateway.connector.import_unattended
+      rake_say "#{bank_gateway.name}: imported #{import_count}"
+      next unless import_count
+
+      bank_gateway.bank_accounts.each do |ba|
+        assign_count = ba.assign_unlinked_transactions
+        rake_say "#{ba.name}: assigned #{assign_count}"
+      end
+    end
+
     BankAccount.find_each do |ba|
       importer = ba.find_connector
       next unless importer

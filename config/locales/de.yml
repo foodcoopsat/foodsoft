@@ -640,6 +640,12 @@ de:
       password: Passwort
       tan: TAN
       username: Benutzername
+  bank_gateway_connector:
+    invalid_redirect_url: Das Bankgateway gab eine ungültige URL zum Weiterleiten zurück.
+    invalid_result_url: 'Das Bankgateway gab einen Pfad zu einer anderen Website als %{host} zurück.'
+    no_accounts: Das Bankgateway hat keine Kontodaten zurückgegeben.
+    timeout: 'Der Import beim Bankgateway konnte nicht innerhalb von %{timeout} Sekunden abgeschlossen werden.'
+    unknown_account: 'Das Bankgateway gab ein Konto zurück, das nicht bekannt ist: %{iban}'
   config:
     hints:
       applepear_url: Seite, auf der das Äpfel- und Birnensystem für Aufgaben erklärt wird.
@@ -842,6 +848,9 @@ de:
       send: Absenden
       title: Gib Feedback
   finance:
+    bank_gateways:
+      callback:
+        notice: '%{count} neue Transaktionen wurden importiert.'
     balancing:
       close:
         alert: 'Ein Fehler ist beim Abrechnen aufgetreten: %{message}'
@@ -938,6 +947,7 @@ de:
       index:
         assign_unlinked_transactions: Transaktionen zuordenen
         import_transactions: Importieren
+        import_transactions_reconfigured: '%{name} braucht ein neues Login bei der Bank.'
         title: Banktransaktionen für %{name} (%{balance})
       show:
         add_financial_link: Finanzlink hinzufügen
